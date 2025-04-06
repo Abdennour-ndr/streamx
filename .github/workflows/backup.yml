@@ -1,0 +1,39 @@
+name: StreamX Backup
+
+on:
+  schedule:
+    - cron: '0 0 * * *'  # Daily at midnight
+  workflow_dispatch:
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Wrangler
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+
+      - name: Create Backup Directory
+        run: mkdir -p backups
+
+      - name: Backup Database
+        run: wrangler d1 backup streamx-db backups/db-$(date +%Y%m%d).sql
+
+      - name: Upload to R2
+        run: wrangler r2 object put streamx-storage/backups/db-$(date +%Y%m%d).sql --file backups/db-$(date +%Y%m%d).sql
+
+      - name: Save Backup as Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: database-backup
+          path: backups/
+          retention-days: 30 

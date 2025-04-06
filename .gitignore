@@ -1,0 +1,72 @@
+# Environment variables
+.env
+.env*.local
+
+# dependencies
+/node_modules
+/.pnp
+.pnp.js
+
+# testing
+/coverage
+/cypress/videos
+/cypress/screenshots
+
+# next.js
+/.next/
+/out/
+
+# production
+/build
+/dist
+
+# misc
+.DS_Store
+*.pem
+.idea/
+.vscode/
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# local env files
+.env*.local
+.env.development
+.env.test
+.env.production
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+# Cloudflare
+.wrangler/
+.dev.vars
+
+# Database
+*.sqlite
+*.sqlite-journal
+/backups/
+
+# Logs
+logs
+*.log
+
+# Cache
+.cache/
+.npm/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db 

@@ -1,0 +1,116 @@
+name: StreamX Platform
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  schedule:
+    - cron: '0 0 * * *'  # Daily backup at midnight
+  workflow_dispatch:  # Manual trigger
+
+env:
+  CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+  CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+
+jobs:
+  test:
+    name: 🧪 Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      
+      - name: Install Dependencies
+        run: npm install
+      
+      - name: Run Tests
+        run: npm test
+        env:
+          CI: true
+      
+      - name: Run Linting
+        run: npm run lint
+      
+      - name: Check Types
+        run: npm run type-check
+
+  deploy:
+    name: 🚀 Deploy
+    needs: test
+    if: github.ref == 'refs/heads/main' && github.event_name != 'schedule'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      
+      - name: Install Dependencies
+        run: npm install
+      
+      - name: Build
+        run: npm run build
+      
+      - name: Deploy to Cloudflare
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ env.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ env.CLOUDFLARE_ACCOUNT_ID }}
+          command: deploy
+
+  backup:
+    name: 💾 Backup
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Install Wrangler
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ env.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ env.CLOUDFLARE_ACCOUNT_ID }}
+      
+      - name: Create Backup Directory
+        run: mkdir -p backups
+      
+      - name: Backup Database
+        run: wrangler d1 backup streamx-db backups/db-$(date +%Y%m%d).sql
+      
+      - name: Upload to R2
+        run: |
+          wrangler r2 object put \
+            streamx-storage/backups/db-$(date +%Y%m%d).sql \
+            --file backups/db-$(date +%Y%m%d).sql
+      
+      - name: Save Backup as Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: database-backup-$(date +%Y%m%d)
+          path: backups/
+          retention-days: 30
+
+  notify:
+    name: 📢 Notify
+    needs: [test, deploy, backup]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check Status
+        if: contains(needs.*.result, 'failure')
+        run: exit 1
+      
+      - name: Send Notification
+        if: failure()
+        run: |
+          echo "Workflow failed!"
+          # Add your notification logic here (e.g., Discord, Slack, or email) 

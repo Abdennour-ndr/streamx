@@ -1,0 +1,60 @@
+name: Test Setup
+
+on: 
+  workflow_dispatch
+  
+env:
+  CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+  CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+
+jobs:
+  verify-setup:
+    name: 🔍 Verify Cloudflare Setup
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: 🔑 Verify Credentials
+        id: auth
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ env.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ env.CLOUDFLARE_ACCOUNT_ID }}
+          command: whoami
+        continue-on-error: true
+      
+      - name: 📊 Check Auth Status
+        if: steps.auth.outcome != 'success'
+        run: |
+          echo "❌ Authentication failed!"
+          echo "Please verify your Cloudflare API Token and Account ID"
+          exit 1
+      
+      - name: 💾 Test D1 Database
+        id: d1
+        if: steps.auth.outcome == 'success'
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ env.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ env.CLOUDFLARE_ACCOUNT_ID }}
+          command: d1 list
+        continue-on-error: true
+      
+      - name: 📦 Test R2 Storage
+        id: r2
+        if: steps.auth.outcome == 'success'
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ env.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ env.CLOUDFLARE_ACCOUNT_ID }}
+          command: r2 bucket list
+        continue-on-error: true
+      
+      - name: 📝 Summary
+        run: |
+          echo "## Test Results 📊" >> $GITHUB_STEP_SUMMARY
+          echo "| Service | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|---------|--------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Authentication | ${{ steps.auth.outcome == 'success' && '✅' || '❌' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| D1 Database | ${{ steps.d1.outcome == 'success' && '✅' || '❌' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| R2 Storage | ${{ steps.r2.outcome == 'success' && '✅' || '❌' }} |" >> $GITHUB_STEP_SUMMARY 

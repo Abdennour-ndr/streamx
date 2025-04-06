@@ -1,0 +1,42 @@
+#:schema node_modules/wrangler/config-schema.json
+name = "streamx"
+main = "src/worker.ts"
+compatibility_date = "2024-01-01"
+compatibility_flags = ["nodejs_compat"]
+
+# Variables
+[vars]
+ENVIRONMENT = "production"
+
+# D1 Database
+[[d1_databases]]
+binding = "DB"
+database_name = "streamx-db"
+database_id = "0564b07f-03b6-458d-bc19-624ffcbc20ff"
+
+# R2 Storage
+[[r2_buckets]]
+binding = "STORAGE"
+bucket_name = "streamx-storage"
+
+# KV Namespace (if needed)
+# [[kv_namespaces]]
+# binding = "CACHE"
+# id = ""
+
+[site]
+bucket = "./public"
+
+[build]
+command = "npm run build"
+watch_dir = "src"
+
+[env.development]
+vars = { ENVIRONMENT = "development" }
+
+[env.staging]
+vars = { ENVIRONMENT = "staging" }
+
+# Triggers
+[triggers]
+crons = ["0 0 * * *"] # Daily at midnight
