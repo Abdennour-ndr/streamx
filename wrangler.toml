@@ -1,12 +1,12 @@
 #:schema node_modules/wrangler/config-schema.json
 name = "streamx"
-main = "src/worker.ts"
+main = "src/index.ts"
 compatibility_date = "2024-01-01"
 compatibility_flags = ["nodejs_compat"]
 
 # Variables
 [vars]
-ENVIRONMENT = "production"
+NODE_ENV = "production"
 
 # D1 Database
 [[d1_databases]]
@@ -32,11 +32,20 @@ command = "npm run build"
 watch_dir = "src"
 
 [env.development]
-vars = { ENVIRONMENT = "development" }
+vars = { NODE_ENV = "development" }
 
 [env.staging]
-vars = { ENVIRONMENT = "staging" }
+vars = { NODE_ENV = "staging" }
 
 # Triggers
 [triggers]
 crons = ["0 0 * * *"] # Daily at midnight
+
+# Environment-specific configurations
+[env.production]
+name = "streamx-prod"
+route = "streamx.your-domain.com/*"
+
+[env.staging]
+name = "streamx-staging"
+route = "staging.streamx.your-domain.com/*"

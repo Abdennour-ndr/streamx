@@ -1,21 +1,19 @@
-name: StreamX Platform
+name: StreamX CI/CD
 
 on:
   push:
     branches: [ main ]
   pull_request:
     branches: [ main ]
-  schedule:
-    - cron: '0 0 * * *'  # Daily backup at midnight
-  workflow_dispatch:  # Manual trigger
+  workflow_dispatch:
 
 env:
   CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
   CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
 
 jobs:
-  test:
-    name: 🧪 Test
+  build-and-test:
+    name: 🏗️ Build & Test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -27,7 +25,7 @@ jobs:
           cache: 'npm'
       
       - name: Install Dependencies
-        run: npm install
+        run: npm ci
       
       - name: Run Tests
         run: npm test
@@ -39,11 +37,14 @@ jobs:
       
       - name: Check Types
         run: npm run type-check
+      
+      - name: Build
+        run: npm run build
 
   deploy:
     name: 🚀 Deploy
-    needs: test
-    if: github.ref == 'refs/heads/main' && github.event_name != 'schedule'
+    needs: build-and-test
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -55,7 +56,7 @@ jobs:
           cache: 'npm'
       
       - name: Install Dependencies
-        run: npm install
+        run: npm ci
       
       - name: Build
         run: npm run build
@@ -69,7 +70,7 @@ jobs:
 
   backup:
     name: 💾 Backup
-    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -87,10 +88,7 @@ jobs:
         run: wrangler d1 backup streamx-db backups/db-$(date +%Y%m%d).sql
       
       - name: Upload to R2
-        run: |
-          wrangler r2 object put \
-            streamx-storage/backups/db-$(date +%Y%m%d).sql \
-            --file backups/db-$(date +%Y%m%d).sql
+        run: wrangler r2 object put streamx-storage/backups/db-$(date +%Y%m%d).sql --file backups/db-$(date +%Y%m%d).sql
       
       - name: Save Backup as Artifact
         uses: actions/upload-artifact@v4
@@ -101,7 +99,7 @@ jobs:
 
   notify:
     name: 📢 Notify
-    needs: [test, deploy, backup]
+    needs: [build-and-test, deploy, backup]
     if: always()
     runs-on: ubuntu-latest
     steps:
