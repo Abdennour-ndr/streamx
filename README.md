@@ -20,12 +20,13 @@ Before you begin, ensure you have installed:
 - pnpm 8.x or later
 - Git
 - A Cloudflare account with Workers and D1 enabled
+- Wrangler CLI (`npm install -g wrangler`)
 
 ## Environment Setup
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/streamx.git
+git clone https://github.com/Abdennour-ndr/streamx.git
 cd streamx
 ```
 
@@ -104,33 +105,27 @@ wrangler d1 migrations apply DB
 
 ## Deployment
 
-### Beta Deployment Checklist
+### Pre-deployment Checklist
 
 1. Environment Configuration:
    - Verify all environment variables are set
    - Configure Cloudflare Workers settings
    - Set up database connections
+   - Configure R2 storage
+   - Set up KV namespace for caching
 
-2. Database Setup:
-   - Run all migrations
-   - Verify data integrity
-   - Create necessary indexes
-
-3. Content Delivery:
-   - Configure CDN settings
-   - Set up media storage
-   - Test streaming capabilities
-
-4. Security:
+2. Security:
    - Enable CORS
    - Configure CSP
    - Set up rate limiting
    - Enable SSL/TLS
+   - Verify security headers
 
-5. Monitoring:
-   - Set up error tracking
+3. Monitoring:
+   - Set up error tracking with Sentry
    - Configure analytics
    - Enable performance monitoring
+   - Set up backup procedures
 
 ### Deploy to Production
 
@@ -141,9 +136,45 @@ pnpm build
 
 2. Deploy to Cloudflare:
 ```bash
-pnpm run build:worker
+# Login to Cloudflare
+wrangler login
+
+# Deploy the worker
 wrangler deploy
+
+# Deploy to production environment
+wrangler deploy --env production
 ```
+
+3. Verify deployment:
+```bash
+# Check worker status
+wrangler whoami
+
+# Check database status
+wrangler d1 list
+
+# Check R2 bucket status
+wrangler r2 bucket list
+```
+
+### Post-deployment Tasks
+
+1. Monitor the application:
+   - Check error logs
+   - Monitor performance metrics
+   - Verify database connections
+   - Check storage usage
+
+2. Set up automated backups:
+   - Configure daily database backups
+   - Set up R2 bucket replication
+   - Test backup restoration
+
+3. Enable monitoring:
+   - Set up alerts for critical errors
+   - Monitor API usage
+   - Track user engagement
 
 ## Contributing
 

@@ -1,0 +1,55 @@
+{
+  "project_name": "StreamX",
+  "automation_settings": {
+    "development": {
+      "auto_code_review": true,
+      "auto_testing": true,
+      "auto_deployment": true,
+      "auto_documentation": true,
+      "auto_security_scan": true
+    },
+    "marketing": {
+      "auto_social_media": true,
+      "auto_content_generation": true,
+      "auto_analytics": true,
+      "auto_campaign_management": true
+    },
+    "monitoring": {
+      "auto_performance_monitoring": true,
+      "auto_error_tracking": true,
+      "auto_user_analytics": true,
+      "auto_security_monitoring": true
+    },
+    "reporting": {
+      "notion_integration": true,
+      "auto_daily_reports": true,
+      "auto_weekly_reports": true,
+      "auto_monthly_reports": true
+    }
+  },
+  "integrations": {
+    "notion": {
+      "database_id": "1cb4c4684e5280d89a99d1f59fac19b3",
+      "api_key": "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"
+    },
+    "cloudflare": {
+      "api_token": "YOUR_CLOUDFLARE_API_TOKEN",
+      "account_id": "YOUR_CLOUDFLARE_ACCOUNT_ID"
+    },
+    "github": {
+      "api_token": "YOUR_GITHUB_API_TOKEN"
+    }
+  },
+  "automation_schedule": {
+    "code_review": "every 6 hours",
+    "testing": "on every push",
+    "deployment": "on successful tests",
+    "security_scan": "daily",
+    "marketing_tasks": "every 4 hours",
+    "reporting": {
+      "daily": "00:00 UTC",
+      "weekly": "Monday 00:00 UTC",
+      "monthly": "1st 00:00 UTC"
+    }
+  }
+} 

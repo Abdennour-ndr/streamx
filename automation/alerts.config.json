@@ -1,0 +1,44 @@
+{
+  "email_alerts": {
+    "enabled": true,
+    "smtp": {
+      "host": "smtp.gmail.com",
+      "port": 587,
+      "secure": false,
+      "auth": {
+        "user": "your-email@gmail.com",
+        "pass": "your-app-password"
+      }
+    },
+    "recipients": [
+      "your-email@domain.com"
+    ]
+  },
+  "slack_alerts": {
+    "enabled": true,
+    "webhook_url": "your-slack-webhook-url",
+    "channel": "#alerts"
+  },
+  "alert_types": {
+    "errors": {
+      "enabled": true,
+      "priority": "high",
+      "channels": ["email", "slack"]
+    },
+    "security": {
+      "enabled": true,
+      "priority": "high",
+      "channels": ["email", "slack"]
+    },
+    "performance": {
+      "enabled": true,
+      "priority": "medium",
+      "channels": ["slack"]
+    },
+    "deployment": {
+      "enabled": true,
+      "priority": "medium",
+      "channels": ["slack"]
+    }
+  }
+} 

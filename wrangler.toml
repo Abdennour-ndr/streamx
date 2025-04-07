@@ -7,6 +7,7 @@ compatibility_flags = ["nodejs_compat"]
 # Variables
 [vars]
 NODE_ENV = "production"
+CORS_ORIGIN = "https://streamx.your-domain.com"
 
 # D1 Database
 [[d1_databases]]
@@ -19,10 +20,10 @@ database_id = "0564b07f-03b6-458d-bc19-624ffcbc20ff"
 binding = "STORAGE"
 bucket_name = "streamx-storage"
 
-# KV Namespace (if needed)
-# [[kv_namespaces]]
-# binding = "CACHE"
-# id = ""
+# KV Namespace for caching
+[[kv_namespaces]]
+binding = "CACHE"
+id = "streamx-cache"
 
 [site]
 bucket = "./public"
@@ -31,21 +32,32 @@ bucket = "./public"
 command = "npm run build"
 watch_dir = "src"
 
+# Security headers
+[security_headers]
+X-Frame-Options = "DENY"
+X-Content-Type-Options = "nosniff"
+X-XSS-Protection = "1; mode=block"
+Referrer-Policy = "strict-origin-when-cross-origin"
+Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https://api.streamx.com;"
+
+# Environment configurations
 [env.development]
+name = "streamx-dev"
+workers_dev = true
 vars = { NODE_ENV = "development" }
-
-[env.staging]
-vars = { NODE_ENV = "staging" }
-
-# Triggers
-[triggers]
-crons = ["0 0 * * *"] # Daily at midnight
-
-# Environment-specific configurations
-[env.production]
-name = "streamx-prod"
-route = "streamx.your-domain.com/*"
 
 [env.staging]
 name = "streamx-staging"
 route = "staging.streamx.your-domain.com/*"
+workers_dev = false
+vars = { NODE_ENV = "staging" }
+
+[env.production]
+name = "streamx-prod"
+route = "streamx.your-domain.com/*"
+workers_dev = false
+vars = { NODE_ENV = "production" }
+
+# Triggers
+[triggers]
+crons = ["0 0 * * *"] # Daily at midnight

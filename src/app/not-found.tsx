@@ -1,23 +1,14 @@
-import Link from 'next/link'
+import React from 'react';
+import Link from 'next/link';
 
 export default function NotFound() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background">
-      <div className="max-w-md w-full p-6 text-center">
-        <h1 className="text-4xl font-bold text-foreground mb-2">404</h1>
-        <h2 className="text-xl font-semibold text-foreground mb-4">
-          Page Not Found
-        </h2>
-        <p className="text-muted-foreground mb-8">
-          The page you're looking for doesn't exist or has been moved.
-        </p>
-        <Link
-          href="/"
-          className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground shadow hover:bg-primary/90 h-9 px-4 py-2"
-        >
-          Return Home
-        </Link>
-      </div>
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
+      <h1 className="text-4xl font-bold text-gray-800 mb-4">404 - Page Not Found</h1>
+      <p className="text-gray-600 mb-8">The page you are looking for does not exist.</p>
+      <Link href="/" className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+        Return Home
+      </Link>
     </div>
-  )
+  );
 } 

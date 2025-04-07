@@ -1,6 +1,7 @@
 import React from 'react';
 import { useAuth } from '@/lib/providers/AuthProvider';
 import SignInForm from '@/components/auth/SignInForm';
+import { useForm } from 'react-hook-form';
 
 interface SignInPageProps {
   redirectUrl?: string;
@@ -8,10 +9,9 @@ interface SignInPageProps {
 
 const SignInPage: React.FC<SignInPageProps> = ({ redirectUrl }) => {
   const { signIn } = useAuth();
-  const [isSubmitting, setIsSubmitting] = React.useState(false);
+  const { handleSubmit } = useForm();
   
   const handleSignIn = async (email: string, password: string) => {
-    setIsSubmitting(true);
     try {
       await signIn(email, password);
       
@@ -19,7 +19,6 @@ const SignInPage: React.FC<SignInPageProps> = ({ redirectUrl }) => {
       const redirectTo = redirectUrl || '/';
       window.location.href = redirectTo;
     } catch (error) {
-      setIsSubmitting(false);
       throw error;
     }
   };
