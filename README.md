@@ -1,193 +1,64 @@
-# StreamX Platform
+# StreamX
 
-StreamX is an all-in-one streaming platform that combines licensed movies, original productions, live streaming, and a content creator hub.
+StreamX is a modern streaming service built with Next.js, TypeScript, and Tailwind CSS.
 
 ## Features
 
-- User authentication and authorization
-- Content streaming with adaptive bitrate
-- Creator tools and monetization
-- Subscription management
-- Live streaming capabilities
-- Analytics and reporting
-- Content recommendation system
+- Responsive navigation bar
+- Features section
+- Pricing plans section
+- Modern design
+- Database integration with Prisma
+- Authentication with NextAuth.js
+- Payment processing with Stripe
 
-## Prerequisites
+## Getting Started
 
-Before you begin, ensure you have installed:
+### Prerequisites
 
-- Node.js 20.x or later
-- pnpm 8.x or later
-- Git
-- A Cloudflare account with Workers and D1 enabled
-- Wrangler CLI (`npm install -g wrangler`)
+- Node.js 18.x or later
+- PostgreSQL
+- Stripe account
 
-## Environment Setup
+### Installation
 
-1. Clone the repository:
+1. Clone the repository
 ```bash
-git clone https://github.com/Abdennour-ndr/streamx.git
+git clone https://github.com/yourusername/streamx.git
 cd streamx
 ```
 
-2. Install dependencies:
+2. Install dependencies
 ```bash
 pnpm install
 ```
 
-3. Create a `.env.local` file with the following variables:
-```env
-# Application Configuration
-NEXT_PUBLIC_APP_URL=http://localhost:3000
-NEXT_PUBLIC_APP_NAME=StreamX
-NEXT_PUBLIC_APP_DESCRIPTION="All-in-One Streaming Platform"
+3. Set up environment variables
+```bash
+cp .env.example .env
+```
+Edit `.env` with your configuration.
 
-# Cloudflare Configuration
-CLOUDFLARE_ACCOUNT_ID=your_account_id
-CLOUDFLARE_API_TOKEN=your_api_token
-CLOUDFLARE_D1_DATABASE_ID=your_database_id
-
-# Authentication
-JWT_SECRET=your_jwt_secret
-JWT_EXPIRY=7d
-COOKIE_NAME=streamx_session
-
-# Payment Processing
-STRIPE_PUBLIC_KEY=your_stripe_public_key
-STRIPE_SECRET_KEY=your_stripe_secret_key
-STRIPE_WEBHOOK_SECRET=your_stripe_webhook_secret
-
-# Content Delivery
-CDN_URL=your_cdn_url
-MEDIA_STORAGE_URL=your_media_storage_url
-
-# Monitoring
-SENTRY_DSN=your_sentry_dsn
-ANALYTICS_ID=your_analytics_id
+4. Set up the database
+```bash
+pnpm prisma migrate dev
 ```
 
-## Development
-
-To start the development server:
-
+5. Run the development server
 ```bash
 pnpm dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-## Testing
-
-Run the test suite:
-
-```bash
-# Unit and integration tests
-pnpm test
-
-# E2E tests
-pnpm test:e2e
-
-# Development mode E2E tests
-pnpm test:e2e:dev
-```
-
-## Database Management
-
-Initialize the database:
-
-```bash
-# Create D1 database
-wrangler d1 create streamx
-
-# Run migrations
-wrangler d1 migrations apply DB
-```
-
 ## Deployment
 
-### Pre-deployment Checklist
+The project is configured to deploy to Cloudflare Pages. To deploy:
 
-1. Environment Configuration:
-   - Verify all environment variables are set
-   - Configure Cloudflare Workers settings
-   - Set up database connections
-   - Configure R2 storage
-   - Set up KV namespace for caching
-
-2. Security:
-   - Enable CORS
-   - Configure CSP
-   - Set up rate limiting
-   - Enable SSL/TLS
-   - Verify security headers
-
-3. Monitoring:
-   - Set up error tracking with Sentry
-   - Configure analytics
-   - Enable performance monitoring
-   - Set up backup procedures
-
-### Deploy to Production
-
-1. Build the application:
 ```bash
-pnpm build
+npx wrangler pages deploy out --project-name streamx
 ```
-
-2. Deploy to Cloudflare:
-```bash
-# Login to Cloudflare
-wrangler login
-
-# Deploy the worker
-wrangler deploy
-
-# Deploy to production environment
-wrangler deploy --env production
-```
-
-3. Verify deployment:
-```bash
-# Check worker status
-wrangler whoami
-
-# Check database status
-wrangler d1 list
-
-# Check R2 bucket status
-wrangler r2 bucket list
-```
-
-### Post-deployment Tasks
-
-1. Monitor the application:
-   - Check error logs
-   - Monitor performance metrics
-   - Verify database connections
-   - Check storage usage
-
-2. Set up automated backups:
-   - Configure daily database backups
-   - Set up R2 bucket replication
-   - Test backup restoration
-
-3. Enable monitoring:
-   - Set up alerts for critical errors
-   - Monitor API usage
-   - Track user engagement
-
-## Contributing
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-## Support
-
-For support, email support@streamx.com or join our Discord channel.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.

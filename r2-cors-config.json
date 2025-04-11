@@ -1,0 +1,90 @@
+{
+  "CORSRules": [
+    {
+      "AllowedOrigins": ["http://localhost:3000", "https://*.streamx.com", "${ALLOWED_ORIGINS}"],
+      "AllowedHeaders": ["Authorization", "Content-Type", "X-Amz-Date", "X-Api-Key", "X-Amz-Security-Token"],
+      "AllowedMethods": ["GET", "PUT", "POST", "DELETE", "OPTIONS"],
+      "MaxAgeSeconds": 3600,
+      "ExposeHeaders": ["ETag", "x-amz-server-side-encryption", "x-amz-request-id", "x-amz-id-2"],
+      "ID": "StreamXCORSConfig"
+    }
+  ],
+  "LifecycleRules": [
+    {
+      "ID": "TransitionToInfrequentAccess",
+      "Status": "Enabled",
+      "Filter": {
+        "Prefix": "uploads/",
+        "ObjectSizeGreaterThan": 5242880
+      },
+      "Transitions": [
+        {
+          "Days": 30,
+          "StorageClass": "INTELLIGENT_TIERING"
+        },
+        {
+          "Days": 90,
+          "StorageClass": "GLACIER"
+        }
+      ]
+    },
+    {
+      "ID": "DeleteOldBackups",
+      "Status": "Enabled",
+      "Filter": {
+        "Prefix": "backups/",
+        "TagFilters": [
+          {
+            "Key": "type",
+            "Value": "automated"
+          }
+        ]
+      },
+      "Expiration": {
+        "Days": 90
+      },
+      "NoncurrentVersionExpiration": {
+        "NoncurrentDays": 30
+      }
+    },
+    {
+      "ID": "CleanTempFiles",
+      "Status": "Enabled",
+      "Filter": {
+        "Prefix": "temp/"
+      },
+      "Expiration": {
+        "Days": 1
+      }
+    }
+  ],
+  "ServerSideEncryptionConfiguration": {
+    "Rules": [
+      {
+        "ApplyServerSideEncryptionByDefault": {
+          "SSEAlgorithm": "AES256"
+        },
+        "BucketKeyEnabled": true
+      }
+    ]
+  },
+  "VersioningConfiguration": {
+    "Status": "Enabled"
+  },
+  "ReplicationConfiguration": {
+    "Role": "${AWS_REPLICATION_ROLE_ARN}",
+    "Rules": [
+      {
+        "ID": "BackupReplication",
+        "Status": "Enabled",
+        "Priority": 1,
+        "DeleteMarkerReplication": { "Status": "Enabled" },
+        "Destination": {
+          "Bucket": "${AWS_BACKUP_BUCKET_ARN}",
+          "StorageClass": "STANDARD",
+          "ReplicaKmsKeyID": "${AWS_KMS_KEY_ARN}"
+        }
+      }
+    ]
+  }
+}

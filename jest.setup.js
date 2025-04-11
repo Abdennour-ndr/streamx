@@ -3,14 +3,74 @@ import '@testing-library/jest-dom'
 import { jest } from '@jest/globals'
 
 // Mock next/router
-jest.mock('next/router', () => require('next-router-mock'))
+jest.mock('next/router', () => ({
+  useRouter() {
+    return {
+      route: '/',
+      pathname: '',
+      query: {},
+      asPath: '',
+      push: jest.fn(),
+      replace: jest.fn(),
+    }
+  },
+}))
+
+// Mock next/image
+jest.mock('next/image', () => ({
+  __esModule: true,
+  default: (props) => {
+    // eslint-disable-next-line jsx-a11y/alt-text
+    return <img {...props} />
+  },
+}))
 
 // Mock next/navigation
-const useRouter = jest.fn()
 jest.mock('next/navigation', () => ({
-  useRouter,
-  usePathname: jest.fn(),
-  useSearchParams: jest.fn(() => new URLSearchParams()),
+  useRouter() {
+    return {
+      push: jest.fn(),
+      replace: jest.fn(),
+      refresh: jest.fn(),
+      back: jest.fn(),
+      forward: jest.fn(),
+      prefetch: jest.fn(),
+    }
+  },
+  usePathname() {
+    return '/'
+  },
+  useSearchParams() {
+    return new URLSearchParams()
+  },
+}))
+
+// Mock @clerk/nextjs
+jest.mock('@clerk/nextjs', () => ({
+  useUser: () => ({
+    isSignedIn: false,
+    user: null,
+  }),
+  useAuth: () => ({
+    isLoaded: true,
+    userId: null,
+  }),
+  ClerkProvider: ({ children }) => children,
+  UserButton: () => <div>UserButton</div>,
+}))
+
+// Mock @vercel/analytics
+jest.mock('@vercel/analytics', () => ({
+  Analytics: () => null,
+}))
+
+// Mock next-themes
+jest.mock('next-themes', () => ({
+  useTheme: () => ({
+    setTheme: jest.fn(),
+    theme: 'light',
+  }),
+  ThemeProvider: ({ children }) => children,
 }))
 
 // Mock Cloudflare environment

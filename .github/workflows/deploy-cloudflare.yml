@@ -1,0 +1,77 @@
+name: Deploy to Cloudflare Pages
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Build project
+        run: pnpm build
+
+      - name: Deploy to Cloudflare Pages
+        uses: cloudflare/pages-action@1
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          projectName: streamx
+          directory: .next
+          branch: main
+          buildCommand: pnpm build
+          buildOutputDirectory: .next
+        env:
+          # Cloudflare Credentials
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_ZONE_ID: ${{ secrets.CLOUDFLARE_ZONE_ID }}
+          
+          # D1 Database
+          D1_DATABASE_ID: ${{ secrets.D1_DATABASE_ID }}
+          
+          # R2 Storage
+          R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}
+          R2_PREVIEW_BUCKET_NAME: ${{ secrets.R2_PREVIEW_BUCKET_NAME }}
+          
+          # KV Namespace
+          KV_NAMESPACE_ID: ${{ secrets.KV_NAMESPACE_ID }}
+          
+          # Environment Configuration
+          NODE_ENV: production
+          ENVIRONMENT: production
+          
+          # Security Configuration
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          JWT_EXPIRY: ${{ secrets.JWT_EXPIRY }}
+          COOKIE_NAME: ${{ secrets.COOKIE_NAME }}
+          
+          # Payment Configuration
+          STRIPE_PUBLIC_KEY: ${{ secrets.STRIPE_PUBLIC_KEY }}
+          STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
+          STRIPE_WEBHOOK_SECRET: ${{ secrets.STRIPE_WEBHOOK_SECRET }}
+          
+          # Content Delivery
+          CDN_URL: ${{ secrets.CDN_URL }}
+          MEDIA_STORAGE_URL: ${{ secrets.MEDIA_STORAGE_URL }}
+          
+          # Monitoring
+          SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
+          ANALYTICS_ID: ${{ secrets.ANALYTICS_ID }}

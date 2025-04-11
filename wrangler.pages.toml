@@ -1,0 +1,49 @@
+# Cloudflare Pages Configuration
+name = "streamx"
+pages_build_output_dir = ".next"
+compatibility_date = "2024-01-01"
+compatibility_flags = ["nodejs_compat"]
+
+# Variables
+[vars]
+NODE_ENV = "production"
+CORS_ORIGIN = "https://streamx.pages.dev"
+CLOUDFLARE_API_TOKEN = "aIGIlxaB5yV8sbV0uReQUfvF1qJZ2t_zxndmMWYa"
+CLOUDFLARE_ACCOUNT_ID = "7eacbeefb829077bbba9aa7f034d7ed9"
+CLOUDFLARE_ZONE_ID = "9862c5982dc291a4f7f06c5a2e8c55e2"
+
+# D1 Database
+[[d1_databases]]
+binding = "DB"
+database_name = "streamx-db"
+database_id = "0564b07f-03b6-458d-bc19-624ffcbc20ff"
+
+# R2 Storage
+[[r2_buckets]]
+binding = "STORAGE"
+bucket_name = "streamx-storage"
+
+# KV Namespace for caching
+[[kv_namespaces]]
+binding = "CACHE"
+id = "a80b1c151d7e4559a9cbeb186ac09ab3"
+
+# Environment configurations
+[env.preview]
+name = "streamx-preview"
+vars = { NODE_ENV = "preview" }
+
+[env.production]
+name = "streamx-prod"
+vars = { NODE_ENV = "production" }
+
+# Headers
+[[headers]]
+pattern = "/*"
+headers = [
+  { key = "X-Frame-Options", value = "DENY" },
+  { key = "X-Content-Type-Options", value = "nosniff" },
+  { key = "X-XSS-Protection", value = "1; mode=block" },
+  { key = "Referrer-Policy", value = "strict-origin-when-cross-origin" },
+  { key = "Content-Security-Policy", value = "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https://api.streamx.com;" }
+] 

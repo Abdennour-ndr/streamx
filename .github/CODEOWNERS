@@ -1,0 +1,20 @@
+# Default owners for everything in the repo
+*       @Abdennour-NDR
+
+# Documentation
+/docs/  @Abdennour-NDR
+
+# Configuration files
+.github/ @Abdennour-NDR
+*.yml    @Abdennour-NDR
+*.yaml   @Abdennour-NDR
+*.json   @Abdennour-NDR
+*.toml   @Abdennour-NDR
+
+# Source code
+/src/    @Abdennour-NDR
+
+# Tests
+/__tests__/ @Abdennour-NDR
+*.test.*    @Abdennour-NDR
+*.spec.*    @Abdennour-NDR 

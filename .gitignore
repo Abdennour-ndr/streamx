@@ -1,66 +1,23 @@
-# Environment variables
+# Environment Variables
 .env
-.env*.local
-
-# dependencies
-/node_modules
-/.pnp
-.pnp.js
-
-# testing
-/coverage
-/cypress/videos
-/cypress/screenshots
-
-# next.js
-/.next/
-/out/
-
-# production
-/build
-/dist
-
-# misc
-.DS_Store
-*.pem
-.idea/
-.vscode/
-
-# debug
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-
-# local env files
-.env*.local
-.env.development
-.env.test
-.env.production
-
-# vercel
-.vercel
-
-# typescript
-*.tsbuildinfo
-next-env.d.ts
+.env.*
+!.env.example
 
 # Cloudflare
 .wrangler/
 .dev.vars
 
-# Database
-*.sqlite
-*.sqlite-journal
-/backups/
+# AWS
+.aws/
+aws-config.json
 
-# Logs
-logs
-*.log
-
-# Cache
-.cache/
-.npm/
+# Secrets
+*.pem
+*.key
+*.crt
+*.cert
+*.p12
+*.pfx
 
 # IDE
 .idea/
@@ -68,6 +25,41 @@ logs
 *.swp
 *.swo
 
-# OS
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Dependencies
+/node_modules
+/.pnp
+.pnp.js
+
+# Testing
+/coverage
+
+# Build
+/.next/
+/out/
+/build
+dist/
+
+# Misc
 .DS_Store
-Thumbs.db 
+Thumbs.db
+
+# Local env files
+.env*.local
+
+# Vercel
+.vercel
+
+# Typescript
+*.tsbuildinfo
+next-env.d.ts
+
+# Prisma
+/prisma/migrations
+/prisma/dev.db

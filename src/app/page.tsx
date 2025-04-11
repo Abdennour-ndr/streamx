@@ -1,21 +1,13 @@
-"use client";
+import Navbar from '@/components/Navbar';
+import Hero from '@/components/Hero';
+import Features from '@/components/Features';
 
-import { NextPage } from 'next';
-import { AuthProvider } from '@/lib/auth/AuthContext';
-import { RecommendationProvider } from '@/lib/ai/RecommendationContext';
-import dynamic from 'next/dynamic';
-
-// Use dynamic import for client components
-const HomePageClient = dynamic(() => import('./page.client'));
-
-const HomePage: NextPage = () => {
+export default function Home() {
   return (
-    <AuthProvider>
-      <RecommendationProvider>
-        <HomePageClient />
-      </RecommendationProvider>
-    </AuthProvider>
+    <main className="min-h-screen">
+      <Navbar />
+      <Hero />
+      <Features />
+    </main>
   );
-};
-
-export default HomePage;
+} 

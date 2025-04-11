@@ -1,0 +1,67 @@
+name: Sync Environment Variables
+
+on:
+  push:
+    paths:
+      - '.env.cloudflare'
+      - '.env.example'
+      - 'wrangler.pages.toml'
+  workflow_dispatch:
+
+jobs:
+  sync-env:
+    runs-on: ubuntu-latest
+    environment: production
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Configure Cloudflare
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+
+      - name: Sync Environment Variables
+        run: |
+          # Update Cloudflare configuration
+          wrangler secret put CLOUDFLARE_ZONE_ID --env production
+          wrangler secret put CLOUDFLARE_ACCOUNT_ID --env production
+          wrangler secret put CLOUDFLARE_API_TOKEN --env production
+          
+          # Update database configuration
+          wrangler secret put D1_DATABASE_ID --env production
+          
+          # Update storage configuration
+          wrangler secret put R2_BUCKET_NAME --env production
+          wrangler secret put R2_PREVIEW_BUCKET_NAME --env production
+          
+          # Update KV configuration
+          wrangler secret put KV_NAMESPACE_ID --env production
+          
+          # Update AWS configuration
+          wrangler secret put AWS_REGION --env production
+          wrangler secret put AWS_S3_BUCKET --env production
+          wrangler secret put CLOUDFRONT_DISTRIBUTION_ID --env production
+          wrangler secret put SQS_QUEUE_URL --env production
+          wrangler secret put SNS_TOPIC_ARN --env production
+
+      - name: Validate Configuration
+        run: wrangler config validate
+
+      - name: Notify on Success
+        if: success()
+        uses: actions/github-script@v6
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: '✅ تم تحديث المتغيرات البيئية بنجاح'
+            })
