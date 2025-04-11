@@ -7,6 +7,7 @@ const nextConfig = {
     ignoreBuildErrors: true,
   },
   output: 'export',
+  trailingSlash: true,
   images: {
     unoptimized: true,
     remotePatterns: [
@@ -31,7 +32,7 @@ const nextConfig = {
       'bufferutil': 'commonjs bufferutil',
     })
     return config
-  },
+  }
 }
 
 module.exports = nextConfig 

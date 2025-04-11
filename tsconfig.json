@@ -23,10 +23,9 @@
       }
     ],
     "paths": {
-      "@/*": [
-        "./src/*"
-      ]
+      "@/*": ["./app/*"]
     },
+    "baseUrl": ".",
     "types": [
       "jest",
       "@testing-library/jest-dom",

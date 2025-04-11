@@ -14,7 +14,7 @@ const navigation = [
   { name: 'Creators', href: '/creators' },
 ]
 
-export function Navbar() {
+export default function Navbar() {
   const pathname = usePathname()
   const { isSignedIn } = useUser()
 
